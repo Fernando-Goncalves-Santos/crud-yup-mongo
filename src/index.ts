@@ -1,13 +1,15 @@
 import express from "express";
 import { UserController } from "./controllers/UserController.ts";
 import { criarTabelaUsuarios } from "./model/User.ts";
+import { validationMiddleware } from "./middlewares/validationMiddleware.ts";
+import UserSchema from "./yup/yupSchema.ts";
 
 const app = express();
 
 app.use(express.json());
 
 app.get("/users", UserController.getUsers);
-app.post("/users", UserController.createUser);
+app.post("/users", validationMiddleware(UserSchema), UserController.createUser);
 app.delete("/users/:id", UserController.removeUser);
 app.put("/users/:id", UserController.updateUser);
 

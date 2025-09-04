@@ -1,5 +1,6 @@
 import { poolPromise } from "../db/db.ts";
 import { type Request, type Response } from "express";
+import userSchema from "../yup/yupSchema.ts";
 
 export class UserController {
   static async getUsers(req: Request, res: Response) {
@@ -21,12 +22,14 @@ export class UserController {
 
     const newUser = { name, email, password, phone };
 
+    const parsedUser = userSchema.cast(newUser);
+
     try {
       const pool = await poolPromise;
       await pool
         .request()
-        .input("nome", name)
-        .input("email", email)
+        .input("nome", parsedUser.name)
+        .input("email", parsedUser.name)
         .input("senha", password)
         .input("phone", phone)
         .query(
